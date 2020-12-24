@@ -1,7 +1,17 @@
 <html>
   <head>
 <style>
-
+    #pager {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    
+    #results {
+        display: flex;
+        flex-direction: column;
+        
+    }
 </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
   </head>
@@ -16,12 +26,26 @@
     async function fetchData () {
         const pageNum = window.location.hash.slice(1) || 1;
         const rsp = await fetch(`${BASE_URL}&page=${pageNum}`)
-        const data = await rsp.json();
+        const {info, records} = await rsp.json();
         
-        console.log(data);
+        if (!$('#pager').html()) {
+            for (let i = 1; i <= info.pages; i++) {
+                $('#pager').append(`
+                    <a href="#${i}">${i}</a>
+                `);
+            }
+        }
+        
+        console.log(info, records);
     }
     
-    fetchData();
+    function bootstrap () {
+        fetchData();
+    }
+    
+    window.addEventListener('hashchange', fetchData);
+    
+    bootstrap();
 </script>
   </body>
 </html>
